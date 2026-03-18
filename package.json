@@ -16,6 +16,7 @@
     "index.d.ts"
   ],
   "devDependencies": {
+    "autobee": "file:../autobee",
     "brittle": "^3.19.0",
     "lunte": "^1.2.0",
     "prettier": "^3.6.2",
@@ -35,5 +36,9 @@
   "bugs": {
     "url": "https://github.com/holepunchto/repo-template/issues"
   },
-  "homepage": "https://github.com/holepunchto/repo-template"
+  "homepage": "https://github.com/holepunchto/repo-template",
+  "dependencies": {
+    "core-coupler": "^2.0.0",
+    "protomux-wakeup": "^2.9.0"
+  }
 }
