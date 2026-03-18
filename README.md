@@ -1,6 +1,4 @@
-# repo-template
-
-Template repository for creating packages
+# autobee-wakeup
 
 ## Usage
 

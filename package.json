@@ -1,7 +1,7 @@
 {
-  "name": "@holepunchto/repo-template",
+  "name": "@holepunchto/autobee-wakeup",
   "version": "0.0.1",
-  "description": "repo-template",
+  "description": "autobee-wakeup",
   "main": "index.js",
   "exports": {
     "./package": "./package.json",
@@ -29,14 +29,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/holepunchto/repo-template.git"
+    "url": "https://github.com/holepunchto/autobee-wakeup.git"
   },
   "author": "Holepunch Inc",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/holepunchto/repo-template/issues"
+    "url": "https://github.com/holepunchto/autobee-wakeup/issues"
   },
-  "homepage": "https://github.com/holepunchto/repo-template",
+  "homepage": "https://github.com/holepunchto/autobee-wakeup",
   "dependencies": {
     "core-coupler": "^2.0.0",
     "protomux-wakeup": "^2.9.0"
