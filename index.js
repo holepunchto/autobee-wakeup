@@ -1,7 +1,3 @@
-/**
- * @typedef {import('autobee')} Autobee
- */
-
 const ProtomuxWakeup = require('protomux-wakeup')
 const CoreCoupler = require('core-coupler')
 const ReadyResource = require('ready-resource')
@@ -9,7 +5,6 @@ const b4a = require('b4a')
 
 class WakeupHandler {
   constructor(wakeup, discoveryKey) {
-    /** @type {AutobeeWakeup} */
     this.wakeup = wakeup
 
     this.active = true
@@ -35,7 +30,6 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   constructor(auto, opts = {}) {
     super()
 
-    /** @type {Autobee} */
     this._auto = auto
     this._owner = !opts.wakeup
 

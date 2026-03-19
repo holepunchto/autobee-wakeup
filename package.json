@@ -16,7 +16,6 @@
     "index.d.ts"
   ],
   "devDependencies": {
-    "autobee": "file:../autobee",
     "brittle": "^3.19.0",
     "corestore": "^7.9.1",
     "lunte": "^1.2.0",
