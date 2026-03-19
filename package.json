@@ -1,6 +1,6 @@
 {
-  "name": "@holepunchto/autobee-wakeup",
-  "version": "0.0.1",
+  "name": "autobee-wakeup",
+  "version": "1.0.0",
   "description": "autobee-wakeup",
   "main": "index.js",
   "exports": {
