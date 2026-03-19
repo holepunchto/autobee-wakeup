@@ -25,10 +25,8 @@ class WakeupHandler {
     session.announce(peer, wakeup)
   }
 
-  // @todo isForwarding check fit in here?
   onannounce(wakeup, peer, session) {
-    // this.wakeup.setNeedsWakeupRequest(true)
-    // this.wakeup.hint(wakeup)
+    this.wakeup.hint(wakeup)
   }
 }
 
@@ -42,8 +40,8 @@ module.exports = class AutobeeWakeup extends ReadyResource {
 
     this._protocol = opts.wakeup || new ProtomuxWakeup()
     this._session = null
-
     this._coupler = null
+    this._hints = new Map()
 
     this._needsWakeupRequest = false
     this._needsWakeup = true
@@ -56,15 +54,18 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._protocol.destroy()
   }
 
-  // @todo need to see how/if these setters fit into autobee flow
-  setNeedsWakeupHeads(needs) {
-    this._needsWakeupHeads = needs
+  get hints() {
+    return this._hints
   }
-  setNeedsWakeup(needs) {
-    this._needsWakeup = needs
-  }
-  setNeedsWakeupRequest(needs) {
-    this._needsWakeupRequest = needs
+
+  hint(hints) {
+    if (!Array.isArray(hints)) hints = [hints]
+    for (const { key, length } of hints) {
+      const hex = b4a.toString(key, 'hex')
+      const prev = this._hints.get(hex)
+      if (!prev || length === -1 || prev < length) this._hints.set(hex, length)
+    }
+    this.auto.bumpSoon()
   }
 
   addStream(stream) {
