@@ -4,6 +4,7 @@
 
 const ProtomuxWakeup = require('protomux-wakeup')
 const CoreCoupler = require('core-coupler')
+const ReadyResource = require('ready-resource')
 
 class WakeupHandler {
   constructor(wakeup, discoveryKey) {
@@ -24,24 +25,25 @@ class WakeupHandler {
     session.announce(peer, wakeup)
   }
 
+  // @todo isForwarding check fit in here?
   onannounce(wakeup, peer, session) {
-    // @todo isForwarding check fit in here?
-    this.wakeup.setNeedsWakeupRequest(true)
-    this.wakeup.hint(wakeup)
+    // this.wakeup.setNeedsWakeupRequest(true)
+    // this.wakeup.hint(wakeup)
   }
 }
 
 module.exports = class AutobeeWakeup extends ReadyResource {
-  constructor(opts = {}) {
-    /** @type {Autobee} */
-    this.auto = opts.auto
-    this.owner = !opts.wakeup
+  constructor(auto, opts = {}) {
+    super()
 
-    this.protocol = opts.wakeup || new ProtomuxWakeup()
-    this.session = null
+    /** @type {Autobee} */
+    this._auto = auto
+    this._owner = !opts.wakeup
+
+    this._protocol = opts.wakeup || new ProtomuxWakeup()
+    this._session = null
 
     this._coupler = null
-    this._hints = new Map()
 
     this._needsWakeupRequest = false
     this._needsWakeup = true
@@ -50,8 +52,8 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   _close() {
-    this.session.destroy()
-    this.protocol.destroy()
+    this._session.destroy()
+    this._protocol.destroy()
   }
 
   // @todo need to see how/if these setters fit into autobee flow
@@ -66,37 +68,15 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   addStream(stream) {
-    this.protocol.addStream(stream)
-  }
-
-  hint(hints) {
-    if (!Array.isArray(hints)) hints = [hints]
-    for (const { key, length } of hints) {
-      const hex = b4a.toString(key, 'hex')
-      const prev = this._hints.get(hex)
-      if (!prev || length === -1 || prev < length) this._hints.set(hex, length)
-    }
-
-    this.auto.bumpSoon()
-  }
-
-  clear() {
-    this._hints.clear()
-  }
-
-  // @todo needed? used if missed due to forwarding
-  broadcastLookup() {
-    this.setNeedsWakeupRequest(false)
-    this.session.broadcastLookup({})
+    this._protocol.addStream(stream)
   }
 
   setCapability(cap, discoveryKey) {
-    if (this.session) this.session.destroy()
-    if (!discoveryKey && b4a.equals(cap, this.key)) discoveryKey = this.discoveryKey
-    this.session = this.protocol.session(cap, new WakeupHandler(this, discoveryKey || null))
+    if (this._session) this._session.destroy()
+    this._session = this._protocol.session(cap, new WakeupHandler(this, discoveryKey || null))
 
     // incase this session has active peers already, bump the coupler
-    for (const peer of this.session.peers) {
+    for (const peer of this._session.peers) {
       if (peer.active) this._bumpWakeupPeer(peer)
     }
   }
@@ -106,16 +86,15 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   _wakeupPeer(stream) {
-    if (!this.session) return
+    if (!this._session) return
     const wakeup = this._getWakeupWriters()
     if (wakeup.length === 0) return
-    this.session.announceByStream(stream, wakeup)
+    this._session.announceByStream(stream, wakeup)
   }
 
   _getWakeupWriters() {
     const writers = []
-
-    for (const w of this.auto.writers) {
+    for (const w of this._auto.writers) {
       if (w.isIndexer || w.pending === null) continue
       writers.push({ key: w.core.key, length: w.length })
     }
@@ -125,7 +104,19 @@ module.exports = class AutobeeWakeup extends ReadyResource {
 
   recouple() {
     if (this._coupler) this._coupler.destroy()
-    const core = this.base.system.bee.core
+    const core = this._auto.local
     this._coupler = new CoreCoupler(core, this._wakeupPeerBound)
+  }
+
+  addCore(core) {
+    if (!this._coupler) return false
+    this._coupler.add(core)
+    return true
+  }
+
+  removeCore(core) {
+    if (!this._coupler) return false
+    this._coupler.remove(core)
+    return true
   }
 }
