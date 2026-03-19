@@ -68,6 +68,21 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this.auto.bumpSoon()
   }
 
+  async flush() {
+    const hints = new Map(this._hints)
+    this._hints.clear()
+
+    for (const [hex, length] of hints) {
+      const key = b4a.from(hex, 'hex')
+      if (this.base.writers.has(hex)) continue
+      if (length !== -1) {
+        const info = await this.base.system.get(key)
+        if (info && length <= info.length) continue // stale hint
+      }
+      await this.base.writers.wakeup(key, length === -1 ? 0 : length)
+    }
+  }
+
   addStream(stream) {
     this._protocol.addStream(stream)
   }
