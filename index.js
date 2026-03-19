@@ -5,6 +5,7 @@
 const ProtomuxWakeup = require('protomux-wakeup')
 const CoreCoupler = require('core-coupler')
 const ReadyResource = require('ready-resource')
+const b4a = require('b4a')
 
 class WakeupHandler {
   constructor(wakeup, discoveryKey) {
