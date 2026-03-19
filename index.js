@@ -60,7 +60,7 @@ module.exports = class AutobeeWakeup extends ReadyResource {
       const prev = this._hints.get(hex)
       if (!prev || length === -1 || prev < length) this._hints.set(hex, length)
     }
-    this.auto.bumpSoon()
+    this._auto.bumpSoon()
   }
 
   async flush() {
