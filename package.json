@@ -39,6 +39,7 @@
   },
   "homepage": "https://github.com/holepunchto/autobee-wakeup",
   "dependencies": {
+    "b4a": "^1.8.0",
     "core-coupler": "^2.0.0",
     "protomux-wakeup": "^2.9.0",
     "ready-resource": "^1.2.0"
