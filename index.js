@@ -69,12 +69,12 @@ module.exports = class AutobeeWakeup extends ReadyResource {
 
     for (const [hex, length] of hints) {
       const key = b4a.from(hex, 'hex')
-      if (this.base.writers.has(hex)) continue
+      if (this._auto.writers.has(hex)) continue
       if (length !== -1) {
-        const info = await this.base.system.get(key)
+        const info = await this._auto.system.get(key)
         if (info && length <= info.length) continue // stale hint
       }
-      await this.base.writers.wakeup(key, length === -1 ? 0 : length)
+      await this._auto.writers.wakeup(key, length === -1 ? 0 : length)
     }
   }
 
