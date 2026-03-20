@@ -63,7 +63,7 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._auto.bumpSoon()
   }
 
-  async flush() {
+  flush() {
     const hints = new Map(this._hints)
     this._hints.clear()
     return hints
