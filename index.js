@@ -106,7 +106,7 @@ module.exports = class AutobeeWakeup extends ReadyResource {
 
   recouple() {
     if (this._coupler) this._coupler.destroy()
-    const core = this._auto.local
+    const core = this._auto.bootstrap
     this._coupler = new CoreCoupler(core, this._wakeupPeerBound)
   }
 
