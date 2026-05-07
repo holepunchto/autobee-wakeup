@@ -96,7 +96,7 @@ module.exports = class AutobeeWakeup extends ReadyResource {
 
   _getWakeupWriters() {
     const writers = []
-    for (const [key, w] of this._auto.writers.active) {
+    for (const [_, w] of this._auto.writers.active) {
       if (!w.isPending) continue
       writers.push(w.core)
     }
