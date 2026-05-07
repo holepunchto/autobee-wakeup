@@ -1,6 +1,6 @@
 {
   "name": "autobee-wakeup",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "autobee-wakeup",
   "main": "index.js",
   "exports": {
