@@ -87,9 +87,11 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     if (this._coupler) this._coupler.update(peer.stream)
   }
 
-  _wakeupPeer(stream) {
+  _wakeupPeer(stream, cores) {
     if (!this._session) return
-    const wakeup = this._getWakeupWriters()
+    // Don't drop a freshly-coupled local writer that isn't pending at this
+    // instant; the peer never learns it otherwise.
+    const wakeup = cores && cores.length ? cores : this._getWakeupWriters()
     if (wakeup.length === 0) return
     this._session.announceByStream(stream, wakeup)
   }
