@@ -16,7 +16,7 @@ class WakeupHandler {
   }
 
   onlookup(req, peer, session) {
-    const wakeup = this.wakeup._getWakeupWriters()
+    const wakeup = this.wakeup._getWakeupWriters({ all: true })
     if (wakeup.length === 0) return
     session.announce(peer, wakeup)
   }
@@ -42,6 +42,7 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._needsWakeup = true
     this._needsWakeupHeads = true
     this._wakeupPeerBound = this._wakeupPeer.bind(this)
+    this._downloading = new Set()
   }
 
   _close() {
@@ -96,10 +97,10 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._session.announceByStream(stream, wakeup)
   }
 
-  _getWakeupWriters() {
+  _getWakeupWriters({ all = false } = {}) {
     const writers = []
     for (const [_, w] of this._auto.writers.active) {
-      if (!w.isPending) continue
+      if (!all && !w.isPending) continue
       writers.push(w.core)
     }
 
@@ -113,9 +114,17 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   addCore(core) {
+    this._ensureDownloading(core)
+
     if (!this._coupler) return false
     this._coupler.add(core)
     return true
+  }
+
+  _ensureDownloading(core) {
+    if (this._downloading.has(core)) return
+    this._downloading.add(core)
+    core.download()
   }
 
   removeCore(core) {
