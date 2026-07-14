@@ -16,7 +16,7 @@ class WakeupHandler {
   }
 
   onlookup(req, peer, session) {
-    const wakeup = this.wakeup._getWakeupWriters({ all: true })
+    const wakeup = this.wakeup._getWakeupWriters()
     if (wakeup.length === 0) return
     session.announce(peer, wakeup)
   }
@@ -97,10 +97,10 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._session.announceByStream(stream, wakeup)
   }
 
-  _getWakeupWriters({ all = false } = {}) {
+  _getWakeupWriters() {
     const writers = []
     for (const [_, w] of this._auto.writers.active) {
-      if (!all && !w.isPending) continue
+      if (w.isPending) continue
       writers.push(w.core)
     }
 
