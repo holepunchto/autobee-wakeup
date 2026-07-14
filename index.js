@@ -42,7 +42,6 @@ module.exports = class AutobeeWakeup extends ReadyResource {
     this._needsWakeup = true
     this._needsWakeupHeads = true
     this._wakeupPeerBound = this._wakeupPeer.bind(this)
-    this._downloading = new Set()
   }
 
   _close() {
@@ -114,17 +113,9 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   addCore(core) {
-    this._ensureDownloading(core)
-
     if (!this._coupler) return false
     this._coupler.add(core)
     return true
-  }
-
-  _ensureDownloading(core) {
-    if (this._downloading.has(core)) return
-    this._downloading.add(core)
-    core.download()
   }
 
   removeCore(core) {
