@@ -45,8 +45,8 @@ module.exports = class AutobeeWakeup extends ReadyResource {
   }
 
   _close() {
-    this._session.destroy()
-    this._protocol.destroy()
+    if (this._session) this._session.destroy()
+    if (this._owner) this._protocol.destroy()
   }
 
   get hints() {
